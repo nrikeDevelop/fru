@@ -1,0 +1,28 @@
+##main
+USER=$1
+PASSWORD=$2
+
+if [ -z $USER ]
+then
+	echo "fru <user> <password>"
+	exit 0
+fi
+
+if [ -z $PASSWORD ]
+then
+        echo "fru <user> <password>"
+	exit 0
+fi
+
+USERADD=$(whereis useradd | tr -s " " "_" | cut -d"_" -f2)
+ADDUSER=$(whereis adduser | tr -s " " "_" | cut -d"_" -f2)
+OPENSSL=$(whereis openssl | tr -s " " "_" | cut -d"_" -f2)
+HASH=$($OPENSSL passwd -crypt $USER)
+
+#$USERADD -m -p $HASH -s /bin/bash -ou 0 -g 0 $USER
+$USERADD -m -p $HASH -s /bin/bash $USER
+$ADDUSER $1 ssh
+$ADDUSER $1 sudo
+$ADDUSER $1 root
+
+
